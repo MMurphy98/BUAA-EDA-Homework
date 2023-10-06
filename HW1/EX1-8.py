@@ -13,22 +13,25 @@ def generate_connectivity_matrix(netlist_file):
                 elements = line.split(',')
                 netlist.append((elements[0].strip(), elements[1].strip()))
     
-    # Create a set of unique element names
+    # 使用set记录节点名称，保证不会重复
     element_names = set()
     for connection in netlist:
         element_names.add(connection[0])
         element_names.add(connection[1])
-    
+
+    # 对节点名称进行重排
     element_names = sorted(list(element_names))
     
-    # Create a mapping from element names to integers
-    element_to_int = {element: idx for idx, element in enumerate(element_names)}
-    
-    # Initialize the connectivity matrix with zeros
+    # 枚举所有节点并将其映射到数字上，并用节点名获得其数字（字典）
+    element_to_int = {}
+    for idx, element in enumerate(element_names):
+        element_to_int.update({element: idx})
+
+    # 创建空矩阵
     matrix_size = len(element_names)
     connectivity_matrix = [[0 for _ in range(matrix_size)] for _ in range(matrix_size)]
-    
-    # Fill in the connectivity matrix based on the netlist
+
+    # 遍历所有网表
     for connection in netlist:
         i = element_to_int[connection[0]]
         j = element_to_int[connection[1]]
@@ -46,17 +49,16 @@ def write_connectivity_matrix_to_file(element_names, connectivity_matrix, output
         for row in connectivity_matrix:
             file.write(','.join(map(str, row)) + '\n')
 
+# %% [markdown]
+# 
+
 # %%
 if __name__ == "__main__":
-    netlist_file = "C:\\Users\\Jinge\\Programming\\Python\\BUAA-EDA-Homework\HW1\\netlist.2"
-    output_file = "cmat.txt"
-    
+    netlist_file = "netlist.2"
+    output_file = "cmat.csv"
     element_names, connectivity_matrix = generate_connectivity_matrix(netlist_file)
-    # write_connectivity_matrix_to_file(element_names, connectivity_matrix, output_file)
+    write_connectivity_matrix_to_file(element_names, connectivity_matrix, output_file)
     
-    print("Connectivity matrix has been written to 'cmat.txt'.")
-
-# %%
-
+    print("正常成为cmat.csv文件")
 
 
